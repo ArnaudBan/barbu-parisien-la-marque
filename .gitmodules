@@ -1,0 +1,6 @@
+[submodule "includes/p2p-core"]
+	path = includes/p2p-core
+	url = git://github.com/AppThemes/wp-posts-to-posts-core.git
+[submodule "includes/scb-framework"]
+	path = includes/scb-framework
+	url = git://github.com/scribu/wp-scb-framework.git

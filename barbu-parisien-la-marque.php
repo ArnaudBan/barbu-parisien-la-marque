@@ -25,5 +25,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 
-// Add a CPT
+// Add a CPT Games
 require_once plugin_dir_path(__FILE__) . 'includes/custom-post-type-game.php';
+
+
+// Include Post 2 post core and scribu framework
+require_once plugin_dir_path(__FILE__) . 'includes/load-p2p.php';
