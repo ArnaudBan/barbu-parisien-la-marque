@@ -31,3 +31,55 @@ require_once plugin_dir_path(__FILE__) . 'includes/custom-post-type-game.php';
 
 // Include Post 2 post core and scribu framework
 require_once plugin_dir_path(__FILE__) . 'includes/load-p2p.php';
+
+// Activation hook
+function bplm_activation(){
+
+	// The 4 default gamers ---------------
+	// Verifie if the option already exist
+	$option_default_user = get_option('bplm_default_gamers');
+
+	if( $option_default_user ){
+
+		// If the option exist verifie if the default gamers steel exist
+		foreach( $option_default_user as $key => $user_id ){
+
+			$steel_exist = new WP_User( $user_id );
+
+			if( ! $steel_exist->exists() ){
+
+				$key++; // Wee dont want user 0
+
+				$steel_exist->set_role('subscriber');
+				$steel_exist->user_login = 'joueur_'. $key;
+				$steel_exist->user_pass = 'joueur_'. $key;
+
+				// Creat user
+				$user_id = wp_insert_user( $steel_exist );
+
+				$option_default_user[$key] = $user_id;
+			}
+		}
+
+		// update option whith new user or not
+		update_option('bplm_default_gamers', $option_default_user);
+
+
+	// If the option doenst existe we creat the 4 default user and the option
+	} else {
+
+		for( $i = 1; $i <= 4; $i++ ){
+			$args = array(
+				'user_pass'  => 'joueur_' . $i,
+				'user_login' => 'joueur_' . $i,
+				'role'       => 'subscriber',
+			);
+			$user_id = wp_insert_user( $args );
+			$default_user[] = $user_id;
+		}
+
+		update_option('bplm_default_gamers', $default_user);
+	}
+
+}
+register_activation_hook( __FILE__ , 'bplm_activation' );
