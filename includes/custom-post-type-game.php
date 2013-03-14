@@ -58,6 +58,14 @@ function bplm_add_game_metabox(){
 			'advanced',
 			'low'
 	);
+	add_meta_box(
+			'bplm_gamers_meta',
+			__( '4 Players', 'barbu-parisien' ),
+			'bplm_players_metabox_content',
+			'game',
+			'side',
+			'high'
+	);
 }
 
 
@@ -66,5 +74,67 @@ function bplm_add_game_metabox(){
  */
 function bplm_la_marque_metabox_content(){
 
+	wp_nonce_field( plugin_basename( __FILE__ ), 'bplm_la_marque_metabox_nonce' );
+
 	echo 'display la marque';
 }
+
+
+/**
+ * Display metabox "4 players"
+ */
+function bplm_players_metabox_content( $post ){
+
+	$registered_player = get_post_meta( $post->ID, 'registered_player', true );
+
+	// First time we set the default players
+	if( ! $registered_player ){
+		$registered_player = get_option('bplm_default_gamers');
+	}
+
+	$all_users = get_users();
+
+	wp_nonce_field( plugin_basename( __FILE__ ), 'bplm_gamers_metabox_nonce' );
+
+	for( $i = 0; $i < 4; $i++ ){
+		?>
+		<p>
+
+			<label for="bplm_player_<?php echo $i ?>">
+				<?php printf( __('Player n°%d', 'barbu-parisien' ) , ( $i + 1 )); ?>
+			</label>
+			<select name="bplm_player[<?php echo $i ?>]" id="bplm_player_<?php echo $i ?>">
+				<?php
+				if( $all_users ){
+					foreach( $all_users as $user){
+
+						?>
+						<option value="<?php echo $user->ID ?>" <?php selected($user->ID, $registered_player[$i], true); ?>>
+							<?php echo $user->display_name; ?>
+						</option>
+						<?php
+					}
+				}
+				?>
+			</select>
+		</p>
+		<?php
+	}
+}
+
+/**
+ * Save the metabox
+ *
+ * @param int $post_id
+ */
+function bpml_save_metabox( $post_id ) {
+
+	// verify this came from the our screen and with proper authorization,
+	if ( isset( $_POST['bplm_gamers_metabox_nonce'] ) && wp_verify_nonce( $_POST['bplm_gamers_metabox_nonce'], plugin_basename( __FILE__ ) ) ){
+		// Check permissions
+		if ( current_user_can( 'edit_page', $post_id ) && isset( $_POST['bplm_player'] )){
+			update_post_meta( $post_id, 'registered_player', $_POST['bplm_player']);
+		}
+	}
+}
+add_action( 'save_post', 'bpml_save_metabox' );
