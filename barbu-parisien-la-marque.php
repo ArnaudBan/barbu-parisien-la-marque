@@ -26,7 +26,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 
 // Add a CPT Games
-require_once plugin_dir_path(__FILE__) . 'includes/custom-post-type-game.php';
+require_once( plugin_dir_path(__FILE__) . 'includes/custom-post-type-game.php' );
+
+// Add display function for games
+require_once( plugin_dir_path(__FILE__) . 'includes/display-function-games.php');
 
 
 // Activation hook
@@ -76,3 +79,28 @@ function bplm_activation(){
 
 }
 register_activation_hook( __FILE__ , 'bplm_activation' );
+
+
+// Filter the content of games to add forms and the results of the game
+function bplm_games_content( $content ){
+
+	if( get_post_type() == 'game' ){
+		var_dump($_POST);
+		$game_forms = bplm_get_the_games_form();
+		$content .= $game_forms;
+	}
+
+	return $content;
+}
+add_filter( 'the_content', 'bplm_games_content' );
+
+// Add js and css
+function bplm_enqueue_scripts(){
+
+	//js
+	wp_register_script( 'bplm_js', plugins_url( 'js/scripts.js', __FILE__ ), array('jquery-ui-tabs', 'jquery-ui-sortable'), '20130427', true );
+
+	// CSS
+	wp_register_style( 'bplm_screen', plugins_url( 'css/screen.css', __FILE__ ), array(), '20130427', 'all' );
+}
+add_action( 'wp_enqueue_scripts', 'bplm_enqueue_scripts' );

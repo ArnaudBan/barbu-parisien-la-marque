@@ -1,0 +1,19 @@
+/**
+ * Barbu Parisien -  La marque
+ * 
+ * Add style for the games
+ *
+ */
+
+.games-forms .tabs{
+	padding: 0;
+}
+
+.games-forms .tabs li{
+	display: inline-block;
+	padding: .3em 1%;
+}
+
+.games-forms .tabs a{
+	display: block;
+}

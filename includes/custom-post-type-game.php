@@ -5,9 +5,9 @@
  */
 
 /*
- * register post type meals
+ * register post type game
  */
-function bplm_add_cpt_meals(){
+function bplm_add_cpt_game(){
 
 	$games_labels = array(
 		'name'               => __( 'Games', 'barbu-parisien'),
@@ -43,7 +43,7 @@ function bplm_add_cpt_meals(){
 
 }
 
-add_action('init', 'bplm_add_cpt_meals');
+add_action('init', 'bplm_add_cpt_game');
 
 
 /*
