@@ -12,7 +12,7 @@
  * @param  array  $values
  * @return string
  */
-function bplm_get_the_games_form(){
+function bplm_get_the_games_form( $saved_value = array() ){
 
 	// Add Scripts and Style
 	wp_enqueue_script( 'bplm_js' );
@@ -26,7 +26,7 @@ function bplm_get_the_games_form(){
 	foreach ($registered_player as $player_id ) {
 		$user = get_user_by('id', $player_id);
 		$player_list .= "<li><a href='#tab_". $player_id ."'>$user->display_name</a></li>";
-		$forms .= bplm_get_players_forms( $player_id, $registered_player );
+		$forms .= bplm_get_players_forms( $player_id, $registered_player, $saved_value );
 	}
 
 	$player_list .= '</ul>';
@@ -35,11 +35,32 @@ function bplm_get_the_games_form(){
 	return $forms;
 }
 
-function bplm_get_players_forms( $id, $registered_player = array() ){
+function bplm_get_players_forms( $id, $registered_player = array(), $saved_value = array() ){
+
 
 	$user = get_user_by('id', $id);
 
 	$form_id = 'player_' . $id;
+
+	$input_name = array(
+			'barbu'     => $form_id. '_barbu_input',
+			'coeur'     => $form_id. '_coeurs_num',
+			'coeur_as'  => $form_id. '_coeur_as',
+			'dame'      => $form_id. '_dames_num',
+			'levees'    => $form_id. '_levees_num',
+			'avant_der' => $form_id. '_avder_input',
+			'der'       => $form_id. '_der_input',
+			'atout'     => $form_id. '_atout_num',
+			'reussite_1'	=> $form_id. '_reussite_1',
+			'reussite_2'	=> $form_id. '_reussite_2',
+			'reussite_3'	=> $form_id. '_reussite_3',
+			'reussite_4'	=> $form_id. '_reussite_4',
+											
+		);
+	// Saved result
+	foreach ($input_name as $names ) {
+		$values[$names] = isset( $saved_value[$id][$names] ) ? $saved_value[$id][$names] : '';
+	}
 
 	// Tabs
 	$forms = "
@@ -62,7 +83,7 @@ function bplm_get_players_forms( $id, $registered_player = array() ){
 							Qui a ramasser le roi de coeur ?
 						</p>
 						<p>".
-							bplm_get_players_radio( $form_id. '_barbu_input', $registered_player) 
+							bplm_get_players_radio( $input_name['barbu'], $registered_player, $values[$input_name['barbu']]) 
 							."
 						</p>	
 					</div>
@@ -73,14 +94,14 @@ function bplm_get_players_forms( $id, $registered_player = array() ){
 							Combien chaque joueurs a t'il récupérer de Coeurs (y compris l'as)?
 						</p>
 						<p>".
-							bplm_get_players_numbers( $form_id. '_coeurs_num', $registered_player, array(), 13) 
+							bplm_get_players_numbers( $input_name['coeur'], $registered_player, $values[$input_name['coeur']], 13) 
 							."
 						</p>
 						<p>
 							Qui a ramasser l'as coeur ?
 						</p>
 						<p>".
-							bplm_get_players_radio( $form_id. '_coeur_as', $registered_player) 
+							bplm_get_players_radio( $input_name['coeur_as'], $registered_player, $values[$input_name['coeur_as']]) 
 							."
 						</p>
 					</div>
@@ -91,7 +112,7 @@ function bplm_get_players_forms( $id, $registered_player = array() ){
 							Combien chaque joueurs a t'il récupérer de dames ?
 						</p>
 						<p>".
-							bplm_get_players_numbers( $form_id. '_dames_num', $registered_player, array(), 4) 
+							bplm_get_players_numbers( $input_name['dame'], $registered_player, $values[$input_name['dame']], 4) 
 							."
 						</p>
 					</div>
@@ -102,7 +123,7 @@ function bplm_get_players_forms( $id, $registered_player = array() ){
 							Combien chaque joueurs a t'il fait de levées ?
 						</p>
 						<p>".
-							bplm_get_players_numbers( $form_id. '_dames_num', $registered_player, array(), 11) 
+							bplm_get_players_numbers( $input_name['levees'], $registered_player, $values[$input_name['levees']], 11) 
 							."
 						</p>
 					</div>
@@ -113,14 +134,14 @@ function bplm_get_players_forms( $id, $registered_player = array() ){
 							Qui a ramassé l'avant dernière levée' ?
 						</p>
 						<p>".
-							bplm_get_players_radio( $form_id. '_avder_input', $registered_player) 
+							bplm_get_players_radio( $input_name['avant_der'], $registered_player, $values[$input_name['avant_der']]) 
 							."
 						</p>	
 						<p>
 							Qui a ramassé la dernière levée ?
 						</p>
 						<p>".
-							bplm_get_players_radio( $form_id. '_der_input', $registered_player) 
+							bplm_get_players_radio( $input_name['der'], $registered_player, $values[$input_name['der']] ) 
 							."
 						</p>	
 					</div>
@@ -132,7 +153,7 @@ function bplm_get_players_forms( $id, $registered_player = array() ){
 							Combien chaque joueurs a t'il fait de levées ?
 						</p>
 						<p>".
-							bplm_get_players_numbers( $form_id. '_atout_num', $registered_player, array(), 13) 
+							bplm_get_players_numbers( $input_name['atout'], $registered_player, $values[$input_name['atout']], 13) 
 							."
 						</p>
 					</div>
@@ -140,11 +161,24 @@ function bplm_get_players_forms( $id, $registered_player = array() ){
 					<div id='". $form_id ."_reussite'>
 						<p>Le joueur qui se débarrasse le premier de toutes ses cartes marque 45 points, le deuxième 20 points, le troisième 10 points et le dernier se voit infliger une pénalité de 10 points.</p>
 						<p>
-							Ordonancé les joueurs, celui qui fini en premier en haut, le dernier a avoir fini en bas ?
+							Qui a fini en premier ? <br/>".
+							bplm_get_players_radio( $input_name['reussite_1'], $registered_player, $values[$input_name['reussite_1']] ) .
+							"
 						</p>
-						<p>".
-							bplm_get_players_sortable_list( $form_id. '_sortable_liste', $registered_player, array()) 
-							."
+						<p>
+							Qui a fini en second ? <br/>".
+							bplm_get_players_radio( $input_name['reussite_2'], $registered_player, $values[$input_name['reussite_2']] ) .
+							"
+						</p>
+						<p>
+							Qui a fini en troisième ? <br/>".
+							bplm_get_players_radio( $input_name['reussite_3'], $registered_player, $values[$input_name['reussite_3']] ) .
+							"
+						</p>
+						<p>
+							Qui a fini en dernier ? <br/>".
+							bplm_get_players_radio( $input_name['reussite_4'], $registered_player, $values[$input_name['reussite_4']] ) .
+							"
 						</p>
 					</div>
 				</div>
@@ -175,7 +209,7 @@ function bplm_get_players_radio( $name, $registered_players = array(), $selected
 	foreach ($registered_players as $player ) {
 		$user = get_user_by('id', $player);
 		$checkbox .= "<label for='". $name. "-". $player ."'>$user->display_name</label>";
-		$checkbox .= "<input id='". $name. "-". $player ."' name='$name' value='$player' type='radio' />";
+		$checkbox .= "<input id='". $name. "-". $player ."' name='$name' value='$player' type='radio' ". checked( $player, $selected_player, false ) ." />";
 	}
 
 	return $checkbox;
@@ -198,39 +232,15 @@ function bplm_get_players_numbers( $name, $registered_players = array(), $values
 
 	$numbers_input = '';
 	foreach ($registered_players as $player ) {
+
+		$value = isset( $values[$player] ) ? $values[$player] : '';
+
 		$user = get_user_by('id', $player);
 		$numbers_input .= "<label for='". $name. "-". $player ."'>$user->display_name</label>";
-		$numbers_input .= "<input id='". $name. "-". $player ."' name='$name' type='number' max='$max' min='0' step='1'/>";
+		$numbers_input .= '<input id="'. $name. '-'. $player .'" name="' . $name.'[' .$player .']"';
+		$numbers_input .= ' type="number" max="'. $max . '" min="0" step="1" value="'.$value.'"/>';
 	}
 
 	return $numbers_input;
-
-}
-
-
-/**
- * [bplm_get_players_sortable_list description]
- * @param  string $name               [description]
- * @param  array  $registered_players [description]
- * @param  array  $values             [description]
- * @return string                     [description]
- */
-function bplm_get_players_sortable_list( $name, $registered_players = array(), $values ){
-
-	if( empty( $registered_players) ){
-		$registered_players = get_post_meta( get_the_ID(), 'registered_player', true );
-	}
-
-	$sortable_liste = '<ul class="sortable">';
-	foreach ($registered_players as $player ) {
-		$user = get_user_by('id', $player);
-		$sortable_liste .= '<li>';
-		$sortable_liste .= '<input type="hidden" name="'.$name.'[]" value="'.$player.'">';
-		$sortable_liste .= $user->display_name;
-		$sortable_liste .= '</li>';
-	}
-	$sortable_liste .='</ul>';
-
-	return $sortable_liste;
 
 }

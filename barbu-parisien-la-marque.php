@@ -30,6 +30,7 @@ require_once( plugin_dir_path(__FILE__) . 'includes/custom-post-type-game.php' )
 
 // Add display function for games
 require_once( plugin_dir_path(__FILE__) . 'includes/display-function-games.php');
+require_once( plugin_dir_path(__FILE__) . 'includes/helpers-games-meta.php');
 
 
 // Activation hook
@@ -85,8 +86,13 @@ register_activation_hook( __FILE__ , 'bplm_activation' );
 function bplm_games_content( $content ){
 
 	if( get_post_type() == 'game' ){
-		var_dump($_POST);
-		$game_forms = bplm_get_the_games_form();
+		
+		$saved_games_meta = update_games_meta( $_REQUEST, get_the_ID() );
+
+		if( ! $saved_games_meta )
+			$saved_games_meta = get_post_meta( get_the_ID(), 'games_marque', true );
+
+		$game_forms = bplm_get_the_games_form( $saved_games_meta );
 		$content .= $game_forms;
 	}
 
@@ -98,7 +104,7 @@ add_filter( 'the_content', 'bplm_games_content' );
 function bplm_enqueue_scripts(){
 
 	//js
-	wp_register_script( 'bplm_js', plugins_url( 'js/scripts.js', __FILE__ ), array('jquery-ui-tabs', 'jquery-ui-sortable'), '20130427', true );
+	wp_register_script( 'bplm_js', plugins_url( 'js/scripts.js', __FILE__ ), array('jquery-ui-tabs'), '20130427', true );
 
 	// CSS
 	wp_register_style( 'bplm_screen', plugins_url( 'css/screen.css', __FILE__ ), array(), '20130427', 'all' );

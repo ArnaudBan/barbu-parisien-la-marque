@@ -12,6 +12,7 @@
 .games-forms .tabs li{
 	display: inline-block;
 	padding: .3em 1%;
+	margin: 0;
 }
 
 .games-forms .tabs a{
