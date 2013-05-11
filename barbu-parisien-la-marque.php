@@ -85,7 +85,7 @@ register_activation_hook( __FILE__ , 'bplm_activation' );
 // Filter the content of games to add forms and the results of the game
 function bplm_games_content( $content ){
 
-	if( get_post_type() == 'game' ){
+	if( is_singular( 'game' ) ){
 		
 		$saved_games_meta = update_games_meta( $_REQUEST, get_the_ID() );
 

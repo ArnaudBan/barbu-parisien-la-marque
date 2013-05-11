@@ -5,16 +5,34 @@
  *
  */
 
-.games-forms .tabs{
+.entry-content .ui-tabs-nav{
 	padding: 0;
-}
-
-.games-forms .tabs li{
-	display: inline-block;
-	padding: .3em 1%;
 	margin: 0;
 }
 
-.games-forms .tabs a{
+.entry-content .ui-state-default{
 	display: block;
+	float: left;
+	padding: .3em 1%;
+	margin: 0 0 -1px;
+	background-color: #eee;
+	border: 1px solid #999;
+	border-radius: 5px 5px 0 0;
+}
+
+.entry-content .ui-state-default a{
+	display: block;
+	text-decoration: none;
+}
+
+.entry-content .ui-tabs-active{
+	border-bottom-color: #fff; 
+	background-color: #fff;
+}
+
+.ui-tabs-panel{
+	clear: left;
+	border: 1px solid #999;
+	border-radius: 0 5px 5px;
+	padding: 1em;
 }
