@@ -85,11 +85,11 @@ function bplm_la_marque_metabox_content(){
  */
 function bplm_players_metabox_content( $post ){
 
-	$registered_player = get_post_meta( $post->ID, 'registered_player', true );
+	$game = get_post_meta( $post->ID, 'games_obj', true );
 
 	// First time we set the default players
-	if( ! $registered_player ){
-		$registered_player = get_option('bplm_default_gamers');
+	if( ! $game ){
+		$game = get_option('bplm_default_gamers');
 	}
 
 	$all_users = get_users();
@@ -109,7 +109,7 @@ function bplm_players_metabox_content( $post ){
 					foreach( $all_users as $user){
 
 						?>
-						<option value="<?php echo $user->ID ?>" <?php selected($user->ID, $registered_player[$i], true); ?>>
+						<option value="<?php echo $user->ID ?>" <?php selected($user->ID, $game->registered_players[$i], true); ?>>
 							<?php echo $user->display_name; ?>
 						</option>
 						<?php
@@ -133,7 +133,19 @@ function bpml_save_metabox( $post_id ) {
 	if ( isset( $_POST['bplm_gamers_metabox_nonce'] ) && wp_verify_nonce( $_POST['bplm_gamers_metabox_nonce'], plugin_basename( __FILE__ ) ) ){
 		// Check permissions
 		if ( current_user_can( 'edit_page', $post_id ) && isset( $_POST['bplm_player'] )){
-			update_post_meta( $post_id, 'registered_player', $_POST['bplm_player']);
+
+			$game = get_post_meta( $post_id, 'games_obj', true );
+
+			// If meta already existe
+			if( $game ){
+				$game->registered_players = $_POST['bplm_player'];
+
+			// Create game
+			} else {
+				$game = new Game( $_POST['bplm_player'] );
+			}
+
+			update_post_meta( $post_id, 'games_obj', $game);
 		}
 	}
 }

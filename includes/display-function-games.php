@@ -12,21 +12,24 @@
  * @param  array  $values
  * @return string
  */
-function bplm_get_the_games_form( $saved_value = array() ){
+function bplm_get_the_games_form( $game ){
 
 	// Add Scripts and Style
 	wp_enqueue_script( 'bplm_js' );
 	wp_enqueue_style( 'bplm_screen' );
 
-	$registered_player = get_post_meta( get_the_ID(), 'registered_player', true );
+	$registered_player = $game->registered_players;
 
 	$player_list = '<ul class="tabs">';
 	$forms = '';
 
 	foreach ($registered_player as $player_id ) {
+
 		$user = get_user_by('id', $player_id);
+
 		$player_list .= "<li><a href='#tab_". $player_id ."'>$user->display_name</a></li>";
-		$forms .= bplm_get_players_forms( $player_id, $registered_player, $saved_value );
+		$forms .= bplm_get_players_forms( $player_id, $registered_player, $game->la_marque );
+
 	}
 
 	$player_list .= '</ul>';
@@ -185,6 +188,7 @@ function bplm_get_players_forms( $id, $registered_player = array(), $saved_value
 				<input type='hidden' name='player_id' value='$id'>
 				<input type='submit' value='Valider $user->display_name'>
 			</form>
+			<div class='la-marque'>". bplm_get_la_marque( $id, $registered_player, $saved_value ) ."</div>
 		</div>
 		";
 
@@ -242,5 +246,52 @@ function bplm_get_players_numbers( $name, $registered_players = array(), $values
 	}
 
 	return $numbers_input;
+
+}
+
+function bplm_get_la_marque( $user_id, $registered_player, $saved_value ){
+
+	$coups = array(
+			'Le Barbue',
+			'Les Coeurs',
+			'Les Dames',
+			'Les Levées',
+			'Les Deux der',
+			'L\'Atoute',
+			'La Réussite',
+		);
+
+	$tab = '<table>';
+
+	$tab .= '<thead>';
+	$tab .= '<tr><th></th>';
+
+	foreach ($registered_player as $player_id) {
+		$user = get_user_by('id', $player_id);
+		$tab .= "<th>$user->display_name</th>";
+	}
+
+	$tab .= '</tr>';
+	$tab .= '</thead>';
+
+	$tab .= '<tdody>';
+
+
+	foreach ($coups as $coup ) {
+
+		$tab .= '<tr>';
+		$tab .= "<td>$coup</td>";
+		foreach ($registered_player as $player_id) {
+			$tab .= "<td>0</td>";
+		}		
+		$tab .=	'</tr>';
+
+	}
+	$tab .= '</tdody>';
+	$tab .= '</table>';
+
+	//var_dump($saved_value[$user_id]);
+
+	return $tab;
 
 }

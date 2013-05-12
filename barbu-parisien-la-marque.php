@@ -30,7 +30,7 @@ require_once( plugin_dir_path(__FILE__) . 'includes/custom-post-type-game.php' )
 
 // Add display function for games
 require_once( plugin_dir_path(__FILE__) . 'includes/display-function-games.php');
-require_once( plugin_dir_path(__FILE__) . 'includes/helpers-games-meta.php');
+require_once( plugin_dir_path(__FILE__) . 'includes/game-class.php');
 
 
 // Activation hook
@@ -86,13 +86,13 @@ register_activation_hook( __FILE__ , 'bplm_activation' );
 function bplm_games_content( $content ){
 
 	if( is_singular( 'game' ) ){
+
+		$game = get_post_meta( get_the_ID(), 'games_obj', true );
 		
-		$saved_games_meta = update_games_meta( $_REQUEST, get_the_ID() );
+		$game->set_la_marque( $_REQUEST, get_the_ID() );
 
-		if( ! $saved_games_meta )
-			$saved_games_meta = get_post_meta( get_the_ID(), 'games_marque', true );
 
-		$game_forms = bplm_get_the_games_form( $saved_games_meta );
+		$game_forms = bplm_get_the_games_form( $game );
 		$content .= $game_forms;
 	}
 
