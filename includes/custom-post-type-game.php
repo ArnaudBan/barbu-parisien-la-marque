@@ -94,6 +94,7 @@ function bplm_players_metabox_content( $post ){
 
 	$all_users = get_users();
 
+
 	wp_nonce_field( plugin_basename( __FILE__ ), 'bplm_gamers_metabox_nonce' );
 
 	for( $i = 0; $i < 4; $i++ ){
@@ -109,7 +110,7 @@ function bplm_players_metabox_content( $post ){
 					foreach( $all_users as $user){
 
 						?>
-						<option value="<?php echo $user->ID ?>" <?php selected($user->ID, $game->registered_players[$i], true); ?>>
+						<option value="<?php echo $user->user_nicename ?>" <?php selected($user->user_nicename, $game->registered_players[$i], true); ?>>
 							<?php echo $user->display_name; ?>
 						</option>
 						<?php
