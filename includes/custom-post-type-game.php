@@ -49,14 +49,18 @@ add_action('init', 'bplm_add_cpt_game');
 /*
  * Add metabox to meals
  */
-function bplm_add_game_metabox(){
+function bplm_add_game_metabox( $post ){
+
+	$game = get_post_meta( $post->ID, 'games_obj', true );
+
 	add_meta_box(
 			'bplm_la_marque_meta',
 			__( 'La marque', 'barbu-parisien' ),
 			'bplm_la_marque_metabox_content',
 			'game',
-			'advanced',
-			'low'
+			'normal',
+			'high',
+			$game
 	);
 	add_meta_box(
 			'bplm_gamers_meta',
@@ -64,7 +68,8 @@ function bplm_add_game_metabox(){
 			'bplm_players_metabox_content',
 			'game',
 			'side',
-			'high'
+			'high',
+			$game
 	);
 }
 
@@ -72,20 +77,20 @@ function bplm_add_game_metabox(){
 /*
  * Display metabox "La marque"
  */
-function bplm_la_marque_metabox_content(){
-
-	wp_nonce_field( plugin_basename( __FILE__ ), 'bplm_la_marque_metabox_nonce' );
-
-	echo 'display la marque';
+function bplm_la_marque_metabox_content( $post, $args ){
+	$game = $args['args'];
+	if( $game ){
+		echo $game->get_total();
+	}
 }
 
 
 /**
  * Display metabox "4 players"
  */
-function bplm_players_metabox_content( $post ){
+function bplm_players_metabox_content( $post, $args ){
 
-	$game = get_post_meta( $post->ID, 'games_obj', true );
+	$game = $args['args'];
 
 	// First time we set the default players
 	if( ! $game ){
