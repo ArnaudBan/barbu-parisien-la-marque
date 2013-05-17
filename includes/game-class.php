@@ -151,7 +151,8 @@ Class Game {
 								$score = $this->la_marque[$player_slug][$key][$player] * -2;
 							}
 							
-							if( $this->la_marque[$player_slug]['coeur_as'] == $player ){
+							if( isset($this->la_marque[$player_slug]['coeur_as'])
+								&& $this->la_marque[$player_slug]['coeur_as'] == $player ){
 								$score -= 6;
 							}
 
@@ -179,7 +180,8 @@ Class Game {
 							if( $this->la_marque[$player_slug][$key] == $player ){
 								$score -= 20;
 							}
-							if( $this->la_marque[$player_slug]['avant_der'] == $player ){
+							if( isset($this->la_marque[$player_slug]['avant_der'])
+								&& $this->la_marque[$player_slug]['avant_der'] == $player ){
 								$score -= 10;
 							}
 							break;
@@ -197,7 +199,8 @@ Class Game {
 							$key_overwrite = 'reussite';
 
 							foreach ($points as $i => $value) {
-								if( $this->la_marque[$player_slug][$key_overwrite .'_' . ( $i + 1 )] == $player ){
+								if( isset($this->la_marque[$player_slug][$key_overwrite .'_' . ( $i + 1 )])
+									&& $this->la_marque[$player_slug][$key_overwrite .'_' . ( $i + 1 )] == $player ){
 									$score = $value;
 								}
 							}

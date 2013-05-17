@@ -93,8 +93,10 @@ function bplm_players_metabox_content( $post, $args ){
 	$game = $args['args'];
 
 	// First time we set the default players
-	if( ! $game ){
-		$game = get_option('bplm_default_gamers');
+	if( $game ){
+		$registered_players = $game->registered_players;
+	} else {
+		$registered_players = get_option('bplm_default_gamers');
 	}
 
 	$all_users = get_users();
@@ -115,7 +117,7 @@ function bplm_players_metabox_content( $post, $args ){
 					foreach( $all_users as $user){
 
 						?>
-						<option value="<?php echo $user->user_nicename ?>" <?php selected($user->user_nicename, $game->registered_players[$i], true); ?>>
+						<option value="<?php echo $user->user_nicename ?>" <?php selected($user->user_nicename, $registered_players[$i], true); ?>>
 							<?php echo $user->display_name; ?>
 						</option>
 						<?php
