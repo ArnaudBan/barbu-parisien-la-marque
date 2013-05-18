@@ -76,7 +76,7 @@ function bplm_get_players_forms( $slug, $game ){
 					<div id='". $form_id ."_coeurs'>
 						<p>il faut éviter de prendre des Coeurs dans ses levées, sous peine d'une pénalité de 2 points par Coeur et de 6 points pour l'As de Cœur. </p>
 						<p>
-							Combien chaque joueurs a t'il récupérer de Coeurs (y compris l'as)?
+							Combien chaque joueurs a t'il récupérer de Coeurs (ne pas compter l'as)?
 						</p>
 						<p>".
 							$game->get_players_numbers( $slug, 'coeur' ) 
