@@ -244,7 +244,7 @@ Class Game {
 
 	public function get_total(){
 
-		$tab = '<table>';
+		$tab = '<table class="widefat">';
 
 		$tab .= '<thead>';
 		$tab .= '<tr><th></th>';
