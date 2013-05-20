@@ -7,7 +7,7 @@
 
 
 /**
- * 
+ *
  */
 Class Game {
 
@@ -16,9 +16,9 @@ Class Game {
 
 	/**
 	 * Creat a new game
-	 * 
-	 * @param array $registered_players   array of register user id 
-	 * @param array  $la_marque          
+	 *
+	 * @param array $registered_players   array of register user id
+	 * @param array  $la_marque
 	 */
 	public function __construct( $registered_players, $la_marque = array() ){
 
@@ -29,7 +29,7 @@ Class Game {
 
 	/**
 	 * Set the new value that the user put in the game form
-	 * 
+	 *
 	 * @param array   $request array of values from the form
 	 * @param integer $id      id of the post ( game )
 	 */
@@ -38,7 +38,7 @@ Class Game {
 		if( $id == -1 ){
 			$id = get_the_ID();
 		}
-		
+
 		$this->la_marque = array_merge( $this->la_marque, $request);
 
 		update_post_meta( $id, 'games_obj', $this );
@@ -50,13 +50,13 @@ Class Game {
 	public function get_players_radio( $slug, $manche ){
 
 		$registered_players = $this->registered_players;
-		$selected_player = isset( $this->la_marque[$slug][$manche] ) ? $this->la_marque[$slug][$manche] : false;
+		$selected_player = isset( $this->la_marque[$slug][$manche]['score'] ) ? $this->la_marque[$slug][$manche]['score'] : false;
 
 		$checkbox = '';
 		foreach ($registered_players as $player ) {
 			$user = get_user_by('slug', $player);
 			$checkbox .= "<label for='". $slug. "-". $player. "-". $manche ."'>$user->display_name</label>";
-			$checkbox .= "<input id='". $slug. "-". $player. "-". $manche ."' name='". $slug. "[". $manche ."]' value='$player' type='radio' ". checked( $player, $selected_player, false ) ." />";
+			$checkbox .= "<input id='". $slug. "-". $player. "-". $manche ."' name='". $slug. "[". $manche ."][score]' value='$player' type='radio' ". checked( $player, $selected_player, false ) ." />";
 		}
 
 		return $checkbox;
@@ -67,9 +67,8 @@ Class Game {
 
 	/**
 	 * [bplm_get_players_numbers description]
-	 * @param  string  $name               [description]
-	 * @param  array   $registered_players [description]
-	 * @param  array   $values             [description]
+	 * @param  string  $slug               [description]
+	 * @param  array   $manche             [description]
 	 * @param  integer $max                [description]
 	 * @return string                      [description]
 	 */
@@ -90,8 +89,83 @@ Class Game {
 
 	}
 
+	/**
+	 * Display the "contre / sur contre" form
+	 * @param  string  $slug
+	 * @param  array   $manche
+	 * @return string
+	 */
+	public function get_contre( $slug, $manche ){
+
+		// Get all user declarant first
+		$have_find_declarant = false;
+		foreach ( $this->registered_players as $player ) {
+			$current = get_user_by('slug', $player);
+
+			if( ! $have_find_declarant ){
+
+				if( $player == $slug ){
+					$player_obj[$player] = $current->display_name;
+					$have_find_declarant = true;
+				} else {
+					$player_obj_end[$player] = $current->display_name;
+				}
+			} else {
+				$player_obj[$player] = $current->display_name;
+			}
+
+		}
+		if( isset( $player_obj_end ) ){
+			$player_obj = array_merge( $player_obj, $player_obj_end );
+		}
+
+		$contre_form = '<h2>Les contres</h2>';
+		$contre_form .= '<table class="contre">';
+
+		// Fisrt line
+		$contre_form .= '<tr><th></th>';
+		foreach ( $player_obj as $player ) {
+			$contre_form .= "<td>$player</td>";
+		}
+		$contre_form .= '</tr>';
+
+		foreach ( $player_obj as $current_player_slug => $player ) {
+
+			$contre_form .= '<tr>';
+
+			$contre_form .= '<th>'. $player .'</th>';
+
+			foreach ( $player_obj as $player_slug => $player_name ) {
+				$player_name = $player_name;
+
+				$value = false;
+				if( isset( $this->la_marque[$slug][$manche]['contre'][$player] ) ){
+					$value = in_array( $player_slug	 , $this->la_marque[$slug][$manche]['contre'][$player] );
+				}
+
+				$contre_form .= '<td>';
+				// Wee can't contre ourself
+				if( $current_player_slug != $player_slug ){
+					$contre_form .= '<input name="' . $slug.'['. $manche .'][contre]['.$player.'][]"';
+					$contre_form .= ' type="checkbox" value="'. $player_slug	 .'" '. checked( $value, true,  false ) .'/>';
+				}
+				$contre_form .= '</td>';
+			}
+			$contre_form .= '</tr>';
+		}
+
+		$contre_form .= '</table>';
+
+		return $contre_form;
+
+	}
 
 
+	/**
+	 * Display "la marque"
+	 * @param  string $player_slug the player slug
+	 * @return string
+	 */
 	public function get_la_marque( $player_slug ){
 
 		$coups = array(
@@ -126,9 +200,9 @@ Class Game {
 
 			$tab .= '<tr>';
 			$tab .= "<td>$coup</td>";
-			
+
 			$total_ligne = '-';
-			
+
 			foreach ( $this->registered_players as $player ) {
 
 				$score = '-';
@@ -145,12 +219,12 @@ Class Game {
 							break;
 
 						case 'coeur':
-		
+
 							$score = 0;
 							if( isset( $this->la_marque[$player_slug][$key][$player] ) ){
 								$score = $this->la_marque[$player_slug][$key][$player] * -2;
 							}
-							
+
 							if( isset($this->la_marque[$player_slug]['coeur_as'])
 								&& $this->la_marque[$player_slug]['coeur_as'] == $player ){
 								$score -= 6;
@@ -159,7 +233,7 @@ Class Game {
 							break;
 
 						case 'dame':
-		
+
 							$score = 0;
 							if( isset( $this->la_marque[$player_slug][$key][$player] ) ){
 								$score = $this->la_marque[$player_slug][$key][$player] * -6;
@@ -167,7 +241,7 @@ Class Game {
 							break;
 
 						case 'levees':
-		
+
 							$score = 0;
 							if( isset( $this->la_marque[$player_slug][$key][$player] ) ){
 								$score = $this->la_marque[$player_slug][$key][$player] * -2;
@@ -175,7 +249,7 @@ Class Game {
 							break;
 
 						case 'der':
-		
+
 							$score = 0;
 							if( $this->la_marque[$player_slug][$key] == $player ){
 								$score -= 20;
@@ -187,7 +261,7 @@ Class Game {
 							break;
 
 						case 'atout':
-		
+
 							$score = 0;
 							if( isset( $this->la_marque[$player_slug][$key][$player] ) ){
 								$score = $this->la_marque[$player_slug][$key][$player] * 5;
@@ -207,10 +281,10 @@ Class Game {
 							break;
 
 						case 'total':
-							
+
 							$score = $this->la_marque[$player_slug][$key][$player];
 							break;
-						
+
 						default:
 							break;
 					}
@@ -222,13 +296,13 @@ Class Game {
 
 						if( isset( $this->la_marque[$player_slug]['total'][$player] ) )
 							$this->la_marque[$player_slug]['total'][$player] += intval( $score );
-						else 
+						else
 							$this->la_marque[$player_slug]['total'][$player] = intval( $score );
 					}
 
-				}  
+				}
 				$tab .= "<td>$score</td>";
-			}		
+			}
 			$tab .= "<td>$total_ligne</td>";
 			$tab .=	'</tr>';
 

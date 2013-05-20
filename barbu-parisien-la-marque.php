@@ -61,7 +61,7 @@ function bplm_activation(){
 
 				if( $user_id ){
 					$user = get_user_by( 'id', $user_id );
-					$option_default_user[$key] = $user->user_nicename;	
+					$option_default_user[$key] = $user->user_nicename;
 				}
 
 			}
@@ -80,7 +80,7 @@ function bplm_activation(){
 			$user_id = wp_insert_user( $args );
 			if( $user_id ){
 				$user = get_user_by( 'id', $user_id );
-				$option_default_user[] = $user->user_nicename;	
+				$option_default_user[] = $user->user_nicename;
 			}
 		}
 
@@ -98,7 +98,7 @@ function bplm_games_content( $content ){
 	if( is_singular( 'game' ) ){
 
 		$game = get_post_meta( get_the_ID(), 'games_obj', true );
-		
+
 		$game->set_la_marque( $_REQUEST, get_the_ID() );
 
 
@@ -114,7 +114,7 @@ add_filter( 'the_content', 'bplm_games_content' );
 function bplm_enqueue_scripts(){
 
 	//js
-	wp_register_script( 'bplm_js', plugins_url( 'js/scripts.js', __FILE__ ), array('jquery-ui-tabs'), '20130427', true );
+	wp_register_script( 'bplm_js', plugins_url( 'js/scripts.js', __FILE__ ), array('jquery-ui-tabs', 'jquery-ui-accordion'), '20130427', true );
 
 	// CSS
 	wp_register_style( 'bplm_screen', plugins_url( 'css/screen.css', __FILE__ ), array(), '20130427', 'all' );

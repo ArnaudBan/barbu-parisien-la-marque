@@ -8,7 +8,7 @@
 
 /**
  * Retrun a string whith the HTML of the games forms
- * 
+ *
  * @param  array  $values
  * @return string
  */
@@ -63,14 +63,19 @@ function bplm_get_players_forms( $slug, $game ){
 					</ul>
 
 					<div id='". $form_id ."_barbu'>
-						<p>Il faut éviter de ramasser le roi de coeur lorsqu'on remporte une levée, sous peine d'une pénalité de 20 points</p>			
+						<p>Il faut éviter de ramasser le roi de coeur lorsqu'on remporte une levée, sous peine d'une pénalité de 20 points</p>
 						<p>
 							Qui a ramasser le roi de coeur ?
 						</p>
 						<p>".
-							$game->get_players_radio( $slug, 'barbue' ) 
+							$game->get_players_radio( $slug, 'barbue' )
 							."
-						</p>	
+						</p>
+
+						<p>".
+							$game->get_contre( $slug, 'barbue' )
+							."
+						</p>
 					</div>
 
 					<div id='". $form_id ."_coeurs'>
@@ -79,7 +84,7 @@ function bplm_get_players_forms( $slug, $game ){
 							Combien chaque joueurs a t'il récupérer de Coeurs (ne pas compter l'as)?
 						</p>
 						<p>".
-							$game->get_players_numbers( $slug, 'coeur' ) 
+							$game->get_players_numbers( $slug, 'coeur' )
 							."
 						</p>
 						<p>
@@ -97,7 +102,7 @@ function bplm_get_players_forms( $slug, $game ){
 							Combien chaque joueurs a t'il récupérer de dames ?
 						</p>
 						<p>".
-							$game->get_players_numbers( $slug, 'dame', 4) 
+							$game->get_players_numbers( $slug, 'dame', 4)
 							."
 						</p>
 					</div>
@@ -108,7 +113,7 @@ function bplm_get_players_forms( $slug, $game ){
 							Combien chaque joueurs a t'il fait de levées ?
 						</p>
 						<p>".
-							$game->get_players_numbers( $slug, 'levees', 11) 
+							$game->get_players_numbers( $slug, 'levees', 11)
 							."
 						</p>
 					</div>
@@ -119,16 +124,16 @@ function bplm_get_players_forms( $slug, $game ){
 							Qui a ramassé l'avant dernière levée' ?
 						</p>
 						<p>".
-							$game->get_players_radio( $slug, 'avant_der' ) 
+							$game->get_players_radio( $slug, 'avant_der' )
 							."
-						</p>	
+						</p>
 						<p>
 							Qui a ramassé la dernière levée ?
 						</p>
 						<p>".
-							$game->get_players_radio( $slug, 'der' ) 
+							$game->get_players_radio( $slug, 'der' )
 							."
-						</p>	
+						</p>
 					</div>
 
 					<div id='". $form_id ."_atout'>
@@ -137,7 +142,7 @@ function bplm_get_players_forms( $slug, $game ){
 							Combien chaque joueurs a t'il fait de levées ?
 						</p>
 						<p>".
-							$game->get_players_numbers( $slug, 'atout', 13) 
+							$game->get_players_numbers( $slug, 'atout', 13)
 							."
 						</p>
 					</div>

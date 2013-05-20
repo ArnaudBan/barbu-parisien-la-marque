@@ -1,6 +1,6 @@
 /**
  * Barbu Parisien -  La marque
- * 
+ *
  * Add style for the games
  *
  */
@@ -10,7 +10,7 @@
 	margin: 0;
 }
 
-.entry-content .ui-state-default{
+.ui-tabs-nav .ui-state-default{
 	display: block;
 	float: left;
 	padding: .3em 1%;
@@ -26,7 +26,7 @@
 }
 
 .entry-content .ui-tabs-active{
-	border-bottom-color: #fff; 
+	border-bottom-color: #fff;
 	background-color: #fff;
 }
 
